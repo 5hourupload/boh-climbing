@@ -1,0 +1,12 @@
+Notice for files:
+Models/Glock/glock.fbx
+Materials/Textures/glock/*
+
+License:
+CC0
+
+Author:
+https://www.artstation.com/rajil_jose_macatangay
+
+3D model URL:
+https://3dmodelhaven.com/model/?c=guns&m=Glock_01
