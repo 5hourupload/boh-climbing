@@ -7,6 +7,9 @@ using UnityEngine.UI;
 
 public class BohController : MonoBehaviour
 {
+    public GameObject player;
+    public GameObject rightHandGhost;
+
     public int pulseWidth = 400; //0-400
     public int frequency = 100; //0-100
 
@@ -18,6 +21,12 @@ public class BohController : MonoBehaviour
 
     public Canvas canvas;
     public Image canvasImage;
+    private bool prevStimulated = false;
+    private bool anyStimulated = false;
+    private float startY = -1;
+    private float cameraOrigY = -1;
+    private float currentMaxDisplacement = -1;
+
 
     private string serialport = "COM19";
 
@@ -93,6 +102,7 @@ public class BohController : MonoBehaviour
     void Update()
     {
 
+
         for (int i = 0; i < 15; i++)
         {
             handSegmentDisplaysCanvas[i].sprite = empty;
@@ -112,7 +122,9 @@ public class BohController : MonoBehaviour
         String message2 = "";
         String message3 = "";
 
-        bool anyStimulated = false;
+        prevStimulated = anyStimulated;
+        anyStimulated = false;
+
         String alphabet = "abcdefghijklmnopqrst";
         for (int i = 0; i < alphabet.Length; i++)
         {
@@ -153,6 +165,31 @@ public class BohController : MonoBehaviour
 
         String wholeMessage = message1 + message2 + message3;
         WriteToSerial(wholeMessage);
+
+
+
+        if (!prevStimulated && anyStimulated)
+        {
+            startY = rightHandGhost.transform.position.y;
+            cameraOrigY = player.transform.position.y;
+            currentMaxDisplacement = 0;
+        }
+        if (anyStimulated)
+        {
+            float currentY = rightHandGhost.transform.position.y;
+            //currentMaxDisplacement = Mathf.Min(currentY, currentMaxDisplacement);
+            Vector3 p = player.transform.position;
+            
+            if ((startY - currentY) > currentMaxDisplacement)
+            {
+                player.transform.position = new Vector3(p.x, cameraOrigY + (startY - currentY) * 1f, p.z);
+                currentMaxDisplacement = startY - currentY;
+            }
+        }
+        if (prevStimulated && !anyStimulated)
+        {
+            
+        }
     }
 
     public void WriteToSerial(string message)

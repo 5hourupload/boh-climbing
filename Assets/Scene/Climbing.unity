@@ -12149,6 +12149,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b1e463c578eb3f4d97c436cd6580b00, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 1598142096}
+  rightHandGhost: {fileID: 2051066983}
   pulseWidth: 400
   frequency: 100
   strengthRightHand: 3c0000003c000000320000003200000032000000320000003200000032000000320000003200000032000000320000003200000032000000320000003200000032000000320000003200000032000000
@@ -29942,6 +29944,12 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+--- !u!1 &1598142096 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 100004, guid: 126d619cf4daa52469682f85c1378b4a,
+    type: 3}
+  m_PrefabInstance: {fileID: 1121653615}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1599775888
 GameObject:
   m_ObjectHideFlags: 0
@@ -37813,6 +37821,12 @@ Transform:
   m_Father: {fileID: 183446221}
   m_RootOrder: 85
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2051066983 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6418159560771251854, guid: 428bb9f2a57259340905fa600d44f56c,
+    type: 3}
+  m_PrefabInstance: {fileID: 1505095462}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2061260102
 GameObject:
   m_ObjectHideFlags: 0
