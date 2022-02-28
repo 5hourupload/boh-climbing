@@ -9,6 +9,7 @@ public class BohController : MonoBehaviour
 {
     public GameObject player;
     public GameObject rightHandGhost;
+    public GameObject leftHandGhost;
 
     public int pulseWidth = 400; //0-400
     public int frequency = 100; //0-100
@@ -21,12 +22,19 @@ public class BohController : MonoBehaviour
 
     public Canvas canvas;
     public Image canvasImage;
-    private bool prevStimulated = false;
-    private bool anyStimulated = false;
-    private float startY = -1;
-    private float cameraOrigY = -1;
-    private float currentMaxDisplacement = -1;
 
+
+    private bool prevStimulatedRight = false;
+    private bool anyStimulatedRight = false;
+    private float startYRight = -1;
+    private float cameraOrigYRight = -1;
+    private float currentMaxDisplacementRight = -1;
+
+    private bool prevStimulatedLeft = false;
+    private bool anyStimulatedLeft = false;
+    private float startYLeft = -1;
+    private float cameraOrigYLeft = -1;
+    private float currentMaxDisplacementLeft = -1;
 
     private string serialport = "COM19";
 
@@ -122,8 +130,8 @@ public class BohController : MonoBehaviour
         String message2 = "";
         String message3 = "";
 
-        prevStimulated = anyStimulated;
-        anyStimulated = false;
+        prevStimulatedRight = anyStimulatedRight;
+        anyStimulatedRight = false;
 
         String alphabet = "abcdefghijklmnopqrst";
         for (int i = 0; i < alphabet.Length; i++)
@@ -139,7 +147,7 @@ public class BohController : MonoBehaviour
                     if (colliding(rightHand[j]))
                     {
                         message3 = message3 + "1,";
-                        anyStimulated = true;
+                        anyStimulatedRight = true;
                     }
                     else
                     {
@@ -154,7 +162,7 @@ public class BohController : MonoBehaviour
         }
         message3 = message3.Substring(0, message3.Length - 1);
 
-        if (anyStimulated)
+        if (anyStimulatedRight)
         {
             message1 = message1 + "1,";
         }
@@ -168,28 +176,60 @@ public class BohController : MonoBehaviour
 
 
 
-        if (!prevStimulated && anyStimulated)
+        prevStimulatedLeft = anyStimulatedLeft;
+        anyStimulatedLeft = false;
+
+        for (int i = 0; i < alphabet.Length; i++)
         {
-            startY = rightHandGhost.transform.position.y;
-            cameraOrigY = player.transform.position.y;
-            currentMaxDisplacement = 0;
-        }
-        if (anyStimulated)
-        {
-            float currentY = rightHandGhost.transform.position.y;
-            //currentMaxDisplacement = Mathf.Min(currentY, currentMaxDisplacement);
-            Vector3 p = player.transform.position;
-            
-            if ((startY - currentY) > currentMaxDisplacement)
+            char letter = alphabet[i];
+            for (int j = 0; j < 15; j++)
             {
-                player.transform.position = new Vector3(p.x, cameraOrigY + (startY - currentY) * 1f, p.z);
-                currentMaxDisplacement = startY - currentY;
+                if (letters[j].Contains(letter.ToString()))
+                {
+                    if (colliding(leftHand[j]))
+                    {
+                        anyStimulatedLeft = true;
+                    }
+                }
             }
         }
-        if (prevStimulated && !anyStimulated)
+
+
+        if (!prevStimulatedRight && anyStimulatedRight)
         {
-            
+            startYRight = rightHandGhost.transform.position.y;
+            cameraOrigYRight = player.transform.position.y;
+            currentMaxDisplacementRight = 0;
         }
+        if (anyStimulatedRight)
+        {
+            float currentY = rightHandGhost.transform.position.y;
+            Vector3 p = player.transform.position;
+            if ((startYRight - currentY) > currentMaxDisplacementRight)
+            {
+                player.transform.position = new Vector3(p.x, cameraOrigYRight + (startYRight - currentY) * 1f, p.z);
+                currentMaxDisplacementRight = startYRight - currentY;
+            }
+        }
+
+
+        if (!prevStimulatedLeft && anyStimulatedLeft)
+        {
+            startYLeft= leftHandGhost.transform.position.y;
+            cameraOrigYLeft = player.transform.position.y;
+            currentMaxDisplacementLeft = 0;
+        }
+        if (anyStimulatedLeft)
+        {
+            float currentY = leftHandGhost.transform.position.y;
+            Vector3 p = player.transform.position;
+            if ((startYLeft - currentY) > currentMaxDisplacementLeft)
+            {
+                player.transform.position = new Vector3(p.x, cameraOrigYLeft + (startYLeft- currentY) * 1f, p.z);
+                currentMaxDisplacementLeft = startYLeft- currentY;
+            }
+        }
+
     }
 
     public void WriteToSerial(string message)
