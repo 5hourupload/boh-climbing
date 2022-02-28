@@ -10,6 +10,7 @@ public class BohController : MonoBehaviour
     public GameObject player;
     public GameObject rightHandGhost;
     public GameObject leftHandGhost;
+    public float moveScale = 1.5f;
 
     public int pulseWidth = 400; //0-400
     public int frequency = 100; //0-100
@@ -207,7 +208,7 @@ public class BohController : MonoBehaviour
             Vector3 p = player.transform.position;
             if ((startYRight - currentY) > currentMaxDisplacementRight)
             {
-                player.transform.position = new Vector3(p.x, cameraOrigYRight + (startYRight - currentY) * 1f, p.z);
+                player.transform.position = new Vector3(p.x, cameraOrigYRight + (startYRight - currentY) * moveScale, p.z);
                 currentMaxDisplacementRight = startYRight - currentY;
             }
         }
@@ -225,7 +226,7 @@ public class BohController : MonoBehaviour
             Vector3 p = player.transform.position;
             if ((startYLeft - currentY) > currentMaxDisplacementLeft)
             {
-                player.transform.position = new Vector3(p.x, cameraOrigYLeft + (startYLeft- currentY) * 1f, p.z);
+                player.transform.position = new Vector3(p.x, cameraOrigYLeft + (startYLeft- currentY) * moveScale, p.z);
                 currentMaxDisplacementLeft = startYLeft- currentY;
             }
         }
