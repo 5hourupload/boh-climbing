@@ -11,12 +11,14 @@ public class BohController : MonoBehaviour
     public GameObject rightHandGhost;
     public GameObject leftHandGhost;
     public float moveScale = 1.5f;
+    public bool twoPalm = true;
 
     public int pulseWidth = 400; //0-400
-    public int frequency = 100; //0-100
+    public int frequency = 200; //0-100
 
     //The strengths correspond to the channels in the arduino code, NOT the order of elements in the rightHand[] array. Ex. Element 0 == Channel 1 == 'a' 
     public int[] strengthRightHand; //0-255
+    public int[] strengthLeftHand; //0-255
 
     public GameObject[] rightHand;
     public GameObject[] leftHand;
@@ -37,7 +39,8 @@ public class BohController : MonoBehaviour
     private float cameraOrigYLeft = -1;
     private float currentMaxDisplacementLeft = -1;
 
-    private string serialport = "COM19";
+    //private string serialport = "/dev/cu.HC-06-DevB";
+    private string serialport = "COM31";
 
     // The order of the letters just corresponds to how the hand elements are assigned to the rightHand[] array, it's all arbitrary
     private string[] letters = { "st", "l", "dk", "c", "n", "fm", "e", "p", "ho", "g", "r", "jq", "i", "b", "a" };
@@ -53,6 +56,7 @@ public class BohController : MonoBehaviour
     Sprite baseHand;
 
     SerialPort stream;
+    int frames = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -110,7 +114,7 @@ public class BohController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        frames++;
 
         for (int i = 0; i < 15; i++)
         {
@@ -131,69 +135,152 @@ public class BohController : MonoBehaviour
         String message2 = "";
         String message3 = "";
 
+        String alphabet = "abcdefghijklmnopqrst";
+
         prevStimulatedRight = anyStimulatedRight;
         anyStimulatedRight = false;
-
-        String alphabet = "abcdefghijklmnopqrst";
-        for (int i = 0; i < alphabet.Length; i++)
-        {
-            bool assigned = false;
-            char letter = alphabet[i];
-            message2 = message2 + strengthRightHand[letter - 'a'] + ",";
-            for (int j = 0; j < 15; j++)
-            {
-                if (letters[j].Contains(letter.ToString()))
-                {
-                    assigned = true;
-                    if (colliding(rightHand[j]))
-                    {
-                        message3 = message3 + "1,";
-                        anyStimulatedRight = true;
-                    }
-                    else
-                    {
-                        message3 = message3 + "0,";
-                    }
-                }
-            }
-            if (!assigned)
-            {
-                message3 = message3 + "0,";
-            }
-        }
-        message3 = message3.Substring(0, message3.Length - 1);
-
-        if (anyStimulatedRight)
-        {
-            message1 = message1 + "1,";
-        }
-        else
-        {
-            message1 = message1 + "0,";
-        }
-
-        String wholeMessage = message1 + message2 + message3;
-        WriteToSerial(wholeMessage);
-
-
 
         prevStimulatedLeft = anyStimulatedLeft;
         anyStimulatedLeft = false;
 
-        for (int i = 0; i < alphabet.Length; i++)
+        if (twoPalm)
         {
-            char letter = alphabet[i];
-            for (int j = 0; j < 15; j++)
+            message2 = strengthRightHand[0] + ",0,0,0,0,0," + strengthLeftHand[0] + ",0,0,0,0,0,0,0,0,0,0,0,0,0,";
+            for (int i = 0; i < alphabet.Length; i++)
             {
-                if (letters[j].Contains(letter.ToString()))
+                char letter = alphabet[i];
+                for (int j = 0; j < 15; j++)
                 {
-                    if (colliding(leftHand[j]))
+                    if (letters[j].Contains(letter.ToString()))
                     {
-                        anyStimulatedLeft = true;
+                        if (colliding(rightHand[j]))
+                        {
+                            anyStimulatedRight = true;
+                        }
+                    }
+                }
+            }
+            if (anyStimulatedRight)
+            {
+                message3 = "1,0,0,0,0,0,";
+            }
+            else
+            {
+                message3 = "0,0,0,0,0,0,";
+            }
+
+
+            for (int i = 0; i < alphabet.Length; i++)
+            {
+                char letter = alphabet[i];
+                for (int j = 0; j < 15; j++)
+                {
+                    if (letters[j].Contains(letter.ToString()))
+                    {
+                        if (colliding(leftHand[j]))
+                        {
+                            anyStimulatedLeft = true;
+                        }
+                    }
+                }
+            }
+            if (anyStimulatedLeft)
+            {
+                message3 = message3 + "1,";
+            }
+            else
+            {
+                message3 = message3 + "0,";
+            }
+            message3 = message3 + "0,0,0,0,0,0,0,0,0,0,0,0,0";
+
+            if (anyStimulatedLeft || anyStimulatedRight)
+            {
+                message1 = message1 + "1,";
+            }
+            else
+            {
+                message1 = message1 + "0,";
+
+            }
+            String wholeMessage = message1 + message2 + message3;
+            //if ((prevStimulatedLeft != anyStimulatedLeft) || (prevStimulatedRight != anyStimulatedRight))
+            //{
+            //    WriteToSerial(wholeMessage);
+            //    Debug.Log(wholeMessage);
+            //}
+            if (frames % 10 == 0)
+            {
+                WriteToSerial(wholeMessage);
+                Debug.Log(wholeMessage);
+            }
+            //    WriteToSerial(wholeMessage);
+            //    Debug.Log(wholeMessage);
+
+        }
+        else
+        {
+            for (int i = 0; i < alphabet.Length; i++)
+            {
+                bool assigned = false;
+                char letter = alphabet[i];
+                message2 = message2 + strengthRightHand[letter - 'a'] + ",";
+                for (int j = 0; j < 15; j++)
+                {
+                    if (letters[j].Contains(letter.ToString()))
+                    {
+                        assigned = true;
+                        if (colliding(rightHand[j]))
+                        {
+                            message3 = message3 + "1,";
+                            anyStimulatedRight = true;
+                        }
+                        else
+                        {
+                            message3 = message3 + "0,";
+                        }
+                    }
+                }
+                if (!assigned)
+                {
+                    message3 = message3 + "0,";
+                }
+            }
+            message3 = message3.Substring(0, message3.Length - 1);
+
+            if (anyStimulatedRight)
+            {
+                message1 = message1 + "1,";
+            }
+            else
+            {
+                message1 = message1 + "0,";
+            }
+
+            String wholeMessage = message1 + message2 + message3;
+            WriteToSerial(wholeMessage);
+
+
+
+            prevStimulatedLeft = anyStimulatedLeft;
+            anyStimulatedLeft = false;
+
+            for (int i = 0; i < alphabet.Length; i++)
+            {
+                char letter = alphabet[i];
+                for (int j = 0; j < 15; j++)
+                {
+                    if (letters[j].Contains(letter.ToString()))
+                    {
+                        if (colliding(leftHand[j]))
+                        {
+                            anyStimulatedLeft = true;
+                        }
                     }
                 }
             }
         }
+        
 
 
         if (!prevStimulatedRight && anyStimulatedRight)
@@ -253,5 +340,11 @@ public class BohController : MonoBehaviour
     private bool colliding(GameObject g)
     {
         return g.GetComponent<HPTK.Views.Notifiers.CustomCollisionNotifier>().colliding;
+    }
+
+    void OnApplicationQuit()
+    {
+        WriteToSerial("0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0");
+        stream.Close();
     }
 }
