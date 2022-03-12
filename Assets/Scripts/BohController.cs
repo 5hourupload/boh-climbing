@@ -10,11 +10,11 @@ public class BohController : MonoBehaviour
     public GameObject player;
     public GameObject rightHandGhost;
     public GameObject leftHandGhost;
-    public float moveScale = 1.5f;
-    public bool twoPalm = true;
+    public float moveScale = 2f;
+    public bool twoPalm = false;
 
     public int pulseWidth = 400; //0-400
-    public int frequency = 200; //0-100
+    public int frequency = 50; //0-100
 
     //The strengths correspond to the channels in the arduino code, NOT the order of elements in the rightHand[] array. Ex. Element 0 == Channel 1 == 'a' 
     public int[] strengthRightHand; //0-255
@@ -214,41 +214,53 @@ public class BohController : MonoBehaviour
                 WriteToSerial(wholeMessage);
                 Debug.Log(wholeMessage);
             }
-            //    WriteToSerial(wholeMessage);
-            //    Debug.Log(wholeMessage);
+
 
         }
-        else
+        else 
         {
-            for (int i = 0; i < alphabet.Length; i++)
+            int[] wristSegments = { 0, 1, 4, 7, 10, 13};
+            for (int i = 0; i < strengthRightHand.Length; i++)
             {
-                bool assigned = false;
-                char letter = alphabet[i];
-                message2 = message2 + strengthRightHand[letter - 'a'] + ",";
-                for (int j = 0; j < 15; j++)
+                message2 += strengthRightHand[i] + ",0,";
+            }
+            for (int i = 0; i < strengthLeftHand.Length; i++)
+            {
+                message2 += strengthLeftHand[i] + ",0,";
+            }
+
+            message3 += colliding(rightHand[14]) ? "1,0," : "0,0,";
+            message3 += colliding(rightHand[2]) || colliding(rightHand[3]) ? "1,0," : "0,0,";
+            message3 += colliding(rightHand[5]) || colliding(rightHand[6]) ? "1,0," : "0,0,";
+            message3 += colliding(rightHand[8]) || colliding(rightHand[9]) ? "1,0," : "0,0,";
+
+            bool rightWristTouching = false;
+            for (int i = 0; i < wristSegments.Length; i++)
+            {
+                if (colliding(rightHand[wristSegments[0]]))
                 {
-                    if (letters[j].Contains(letter.ToString()))
-                    {
-                        assigned = true;
-                        if (colliding(rightHand[j]))
-                        {
-                            message3 = message3 + "1,";
-                            anyStimulatedRight = true;
-                        }
-                        else
-                        {
-                            message3 = message3 + "0,";
-                        }
-                    }
-                }
-                if (!assigned)
-                {
-                    message3 = message3 + "0,";
+                    rightWristTouching = true;   
                 }
             }
-            message3 = message3.Substring(0, message3.Length - 1);
+            message3 += rightWristTouching ? "1,0," : "0,0,";
+            anyStimulatedRight = message3.Contains("1");
 
-            if (anyStimulatedRight)
+            message3 += colliding(leftHand[14]) ? "1,0," : "0,0,";
+            message3 += colliding(leftHand[2]) || colliding(leftHand[3]) ? "1,0," : "0,0,";
+            message3 += colliding(leftHand[5]) || colliding(leftHand[6]) ? "1,0," : "0,0,";
+            message3 += colliding(leftHand[8]) || colliding(leftHand[9]) ? "1,0," : "0,0,";
+            bool leftWristTouching = false;
+            for (int i = 0; i < wristSegments.Length; i++)
+            {
+                if (colliding(leftHand[wristSegments[0]]))
+                {
+                    leftWristTouching = true;
+                }
+            }
+            message3 += leftWristTouching ? "1,0" : "0,0";
+            anyStimulatedLeft = message3.Contains("1");
+
+            if (anyStimulatedRight || anyStimulatedLeft)
             {
                 message1 = message1 + "1,";
             }
@@ -256,29 +268,14 @@ public class BohController : MonoBehaviour
             {
                 message1 = message1 + "0,";
             }
-
             String wholeMessage = message1 + message2 + message3;
-            WriteToSerial(wholeMessage);
 
-
-
-            prevStimulatedLeft = anyStimulatedLeft;
-            anyStimulatedLeft = false;
-
-            for (int i = 0; i < alphabet.Length; i++)
+            if (frames % 10 == 0)
             {
-                char letter = alphabet[i];
-                for (int j = 0; j < 15; j++)
-                {
-                    if (letters[j].Contains(letter.ToString()))
-                    {
-                        if (colliding(leftHand[j]))
-                        {
-                            anyStimulatedLeft = true;
-                        }
-                    }
-                }
+                WriteToSerial(wholeMessage);
+                Debug.Log(wholeMessage);
             }
+
         }
         
 
