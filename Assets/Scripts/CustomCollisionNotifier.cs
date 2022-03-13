@@ -15,6 +15,7 @@ namespace HPTK.Views.Notifiers
         public RigidbodyEvent onRbExit = new RigidbodyEvent();
 
         public Boolean colliding = false;
+        public Boolean touchingRope = false;
 
         private void Start()
         {
@@ -25,6 +26,9 @@ namespace HPTK.Views.Notifiers
 
             if (collision.gameObject.name.Contains("hold"))
                 colliding = true;
+
+            if (collision.gameObject.name.Contains("rope"))
+                touchingRope = true;
 
             if (collision.rigidbody)
                 onRbEnter.Invoke(collision.rigidbody);
@@ -41,6 +45,7 @@ namespace HPTK.Views.Notifiers
 
         private void OnCollisionExit(Collision collision)
         {
+            touchingRope = false;
             colliding = false;
             if (collision.rigidbody)
                 onRbExit.Invoke(collision.rigidbody);

@@ -217,16 +217,39 @@ public class BohController : MonoBehaviour
 
 
         }
-        else 
+        else
         {
-            int[] wristSegments = { 0, 1, 4, 7, 10, 13};
-            for (int i = 0; i < strengthRightHand.Length; i++)
+            int[] wristSegments = { 0, 1, 4, 7, 10, 13 };
+            bool leftRope = false;
+            bool rightRope = false;
+            for (int i = 0; i < 15; i++)
             {
-                message2 += strengthRightHand[i] + ",0,";
+                if (touchingRope(rightHand[i]))
+                    rightRope = true;
+                if (touchingRope(leftHand[i]))
+                    leftRope = true;
             }
-            for (int i = 0; i < strengthLeftHand.Length; i++)
+
+            if (!rightRope) { 
+                for (int i = 0; i < strengthRightHand.Length; i++)
+                {
+                    message2 += strengthRightHand[i] + ",0,";
+                }
+            }
+            else
             {
-                message2 += strengthLeftHand[i] + ",0,";
+                message2 += "0,0,0,0,0,0,0,0,0,0,";
+            }
+            if (!leftRope)
+            {
+                for (int i = 0; i < strengthLeftHand.Length; i++)
+                {
+                    message2 += strengthLeftHand[i] + ",0,";
+                }
+            }
+            else
+            {
+                message2 += "0,0,0,0,0,0,0,0,0,0,";
             }
 
             message3 += colliding(rightHand[14]) ? "1,0," : "0,0,";
@@ -337,6 +360,11 @@ public class BohController : MonoBehaviour
     private bool colliding(GameObject g)
     {
         return g.GetComponent<HPTK.Views.Notifiers.CustomCollisionNotifier>().colliding;
+    }
+
+    private bool touchingRope(GameObject g)
+    {
+        return g.GetComponent<HPTK.Views.Notifiers.CustomCollisionNotifier>().touchingRope;
     }
 
     void OnApplicationQuit()
