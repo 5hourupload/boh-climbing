@@ -40,7 +40,7 @@ public class BohController : MonoBehaviour
     private float currentMaxDisplacementLeft = -1;
 
     //private string serialport = "/dev/cu.HC-06-DevB";
-    private string serialport = "COM31";
+    private string serialport = "COM6";
 
     // The order of the letters just corresponds to how the hand elements are assigned to the rightHand[] array, it's all arbitrary
     private string[] letters = { "st", "l", "dk", "c", "n", "fm", "e", "p", "ho", "g", "r", "jq", "i", "b", "a" };
@@ -232,7 +232,7 @@ public class BohController : MonoBehaviour
             message3 += colliding(rightHand[14]) ? "1,0," : "0,0,";
             message3 += colliding(rightHand[2]) || colliding(rightHand[3]) ? "1,0," : "0,0,";
             message3 += colliding(rightHand[5]) || colliding(rightHand[6]) ? "1,0," : "0,0,";
-            message3 += colliding(rightHand[8]) || colliding(rightHand[9]) ? "1,0," : "0,0,";
+            message3 += colliding(rightHand[8]) || colliding(rightHand[9]) || colliding(rightHand[11]) || colliding(rightHand[12]) ? "1,0," : "0,0,";
 
             bool rightWristTouching = false;
             for (int i = 0; i < wristSegments.Length; i++)
@@ -248,7 +248,7 @@ public class BohController : MonoBehaviour
             message3 += colliding(leftHand[14]) ? "1,0," : "0,0,";
             message3 += colliding(leftHand[2]) || colliding(leftHand[3]) ? "1,0," : "0,0,";
             message3 += colliding(leftHand[5]) || colliding(leftHand[6]) ? "1,0," : "0,0,";
-            message3 += colliding(leftHand[8]) || colliding(leftHand[9]) ? "1,0," : "0,0,";
+            message3 += colliding(leftHand[8]) || colliding(leftHand[9]) || colliding(leftHand[11]) || colliding(leftHand[12]) ? "1,0," : "0,0,";
             bool leftWristTouching = false;
             for (int i = 0; i < wristSegments.Length; i++)
             {

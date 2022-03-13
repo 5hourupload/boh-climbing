@@ -11390,7 +11390,7 @@ GameObject:
   - component: {fileID: 364265308}
   - component: {fileID: 364265307}
   m_Layer: 0
-  m_Name: hold_rope
+  m_Name: holgd_rope
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -21702,9 +21702,9 @@ MonoBehaviour:
   moveScale: 2
   twoPalm: 0
   pulseWidth: 400
-  frequency: 50
-  strengthRightHand: 90010000900100009001000090010000f4010000
-  strengthLeftHand: 90010000900100009001000090010000f4010000
+  frequency: 100
+  strengthRightHand: f4010000f4010000f4010000f401000058020000
+  strengthLeftHand: f4010000f4010000f4010000f401000058020000
   rightHand:
   - {fileID: 393591839}
   - {fileID: 464213703}
