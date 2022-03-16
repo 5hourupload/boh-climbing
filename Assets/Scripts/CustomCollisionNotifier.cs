@@ -16,6 +16,7 @@ namespace HPTK.Views.Notifiers
 
         public Boolean colliding = false;
         public Boolean touchingRope = false;
+        public Boolean touchingFinish = false;
 
         private void Start()
         {
@@ -29,6 +30,9 @@ namespace HPTK.Views.Notifiers
 
             if (collision.gameObject.name.Contains("rope"))
                 touchingRope = true;
+
+            if (collision.gameObject.name.Contains("finish_button"))
+                touchingFinish = true;
 
             if (collision.rigidbody)
                 onRbEnter.Invoke(collision.rigidbody);

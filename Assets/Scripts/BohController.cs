@@ -26,6 +26,11 @@ public class BohController : MonoBehaviour
     public Canvas canvas;
     public Image canvasImage;
 
+    //Button Variables
+    public Transform buttonTop;
+    public GameObject finishText;
+
+
 
     private bool prevStimulatedRight = false;
     private bool anyStimulatedRight = false;
@@ -109,6 +114,10 @@ public class BohController : MonoBehaviour
         {
 
         }
+
+        //Button Functionality
+        finishText.SetActive(false);
+
     }
 
     // Update is called once per frame
@@ -338,6 +347,37 @@ public class BohController : MonoBehaviour
             }
         }
 
+
+        bool buttonTouching = false;
+        for (int i = 0; i < rightHand.Length; i++)
+        {
+            if (touchingFinish(rightHand[i]))
+            {
+                buttonTouching = true;
+            }
+        }
+        for (int i = 0; i < leftHand.Length; i++)
+        {
+            if (touchingFinish(leftHand[i]))
+            {
+                buttonTouching = true;
+            }
+        }
+
+
+        if (buttonTouching)
+        {
+            Vector3 p = buttonTop.position;
+            float newX = Mathf.Max(p.x - .005f, -1.4f);
+            buttonTop.position = new Vector3(newX, p.y, p.z);
+        }
+        if (buttonTop.position.x == -1.4f)
+        {
+            finishText.SetActive(true);
+        }    
+
+        
+
     }
 
     public void WriteToSerial(string message)
@@ -367,6 +407,11 @@ public class BohController : MonoBehaviour
         return g.GetComponent<HPTK.Views.Notifiers.CustomCollisionNotifier>().touchingRope;
     }
 
+
+    private bool touchingFinish(GameObject g)
+    {
+        return g.GetComponent<HPTK.Views.Notifiers.CustomCollisionNotifier>().touchingFinish;
+    }
     void OnApplicationQuit()
     {
         WriteToSerial("0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0");
