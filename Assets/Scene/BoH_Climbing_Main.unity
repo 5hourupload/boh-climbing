@@ -58677,7 +58677,7 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: ac912c9fce61d9b489fa6167577b6d9b,
         type: 3}
       propertyPath: m_Name
-      value: finish_button_top2
+      value: finish_button_top_hold2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ac912c9fce61d9b489fa6167577b6d9b, type: 3}
