@@ -44292,6 +44292,11 @@ PrefabInstance:
       propertyPath: m_ConnectedAnchor.z
       value: -0.000000017847924
       objectReference: {fileID: 0}
+    - target: {fileID: 5629647070858238116, guid: 428bb9f2a57259340905fa600d44f56c,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5695785095153960748, guid: 428bb9f2a57259340905fa600d44f56c,
         type: 3}
       propertyPath: m_Enabled
@@ -44791,6 +44796,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalPosition.y
       value: 0.020812107
+      objectReference: {fileID: 0}
+    - target: {fileID: 7796577528210533195, guid: 428bb9f2a57259340905fa600d44f56c,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7887576001545449601, guid: 428bb9f2a57259340905fa600d44f56c,
         type: 3}
