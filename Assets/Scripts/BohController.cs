@@ -63,6 +63,17 @@ public class BohController : MonoBehaviour
     SerialPort stream;
     int frames = 0;
 
+    bool calibRightThumb = false;
+    bool calibRightIndex = false;
+    bool calibRightMiddle = false;
+    bool calibRightRing = false;
+    bool calibRightPalm = false;
+    bool calibLeftThumb = false;
+    bool calibLeftIndex = false;
+    bool calibLeftMiddle = false;
+    bool calibLeftRing = false;
+    bool calibLeftPalm = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -123,6 +134,18 @@ public class BohController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        if (Input.GetKeyDown("1")) calibRightThumb = !calibRightThumb;
+        if (Input.GetKeyDown("2")) calibRightIndex = !calibRightIndex;
+        if (Input.GetKeyDown("3")) calibRightMiddle = !calibRightMiddle;
+        if (Input.GetKeyDown("4")) calibRightRing = !calibRightRing;
+        if (Input.GetKeyDown("5")) calibRightPalm = !calibRightPalm;
+        if (Input.GetKeyDown("6")) calibLeftThumb = !calibLeftThumb;
+        if (Input.GetKeyDown("7")) calibLeftIndex = !calibLeftIndex;
+        if (Input.GetKeyDown("8")) calibLeftMiddle = !calibLeftMiddle;
+        if (Input.GetKeyDown("9")) calibLeftRing = !calibLeftRing;
+        if (Input.GetKeyDown("0")) calibLeftPalm = !calibLeftPalm;
+
         frames++;
 
         for (int i = 0; i < 15; i++)
@@ -139,6 +162,37 @@ public class BohController : MonoBehaviour
             }
         }
 
+        bool calibrating = false;
+        if (calibRightThumb || calibLeftThumb || calibRightIndex || calibLeftIndex || calibRightMiddle || calibLeftMiddle || calibRightRing || calibLeftRing || calibRightPalm || calibLeftPalm)
+        {
+            String m1 = pulseWidth + "," + frequency + ",1,";
+            for (int i = 0; i < strengthRightHand.Length; i++)
+            {
+                m1 += strengthRightHand[i] + ",0,";
+            }
+            for (int i = 0; i < strengthLeftHand.Length; i++)
+            {
+                m1 += strengthLeftHand[i] + ",0,";
+            }
+            String m2 = "";
+            if (calibRightThumb)  m2 = "1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0";
+            if (calibRightIndex)  m2 = "0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0";
+            if (calibRightMiddle) m2 = "0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0";
+            if (calibRightRing)   m2 = "0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0";
+            if (calibRightPalm)   m2 = "0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0";
+            if (calibLeftThumb)   m2 = "0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0";
+            if (calibLeftIndex)   m2 = "0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0";
+            if (calibLeftMiddle)  m2 = "0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0";
+            if (calibLeftRing)    m2 = "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0";
+            if (calibLeftPalm)    m2 = "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0";
+
+            if (frames % 10 == 0)
+            {
+                WriteToSerial(m1+m2);
+                Debug.Log(m1+m2);
+            }
+            calibrating = true;
+        }
 
         String message1 = pulseWidth + "," + frequency + ",";
         String message2 = "";
@@ -152,7 +206,7 @@ public class BohController : MonoBehaviour
         prevStimulatedLeft = anyStimulatedLeft;
         anyStimulatedLeft = false;
 
-        if (twoPalm)
+        if (twoPalm && !calibrating)
         {
             message2 = strengthRightHand[0] + ",0,0,0,0,0," + strengthLeftHand[0] + ",0,0,0,0,0,0,0,0,0,0,0,0,0,";
             for (int i = 0; i < alphabet.Length; i++)
@@ -226,7 +280,7 @@ public class BohController : MonoBehaviour
 
 
         }
-        else
+        else if (!calibrating)
         {
             int[] wristSegments = { 0, 1, 4, 7, 10, 13 };
             bool leftRope = false;
